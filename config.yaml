@@ -7,6 +7,8 @@ link_idx: 2
 
 comment_idx: 3
 
+group_idx: 4
+
 seperator: ','
 
-row_start_idx: 0
+row_start_idx: 1
