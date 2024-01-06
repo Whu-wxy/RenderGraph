@@ -4,24 +4,10 @@ from pyecharts.globals import ThemeType
 import os
 from read_xls_nodes import read_map_xls
 from html_to_share import html_to_share
+import yaml
 
-# nodes = [
-#     {'name': '结点1'},
-#     {'name': '结点2'},
-#     {'name': '结点3'},
-#     {'name': '结点4'},
-#     {'name': '结点5'},
-#     {'name': '结点6'},
-# ]
-#
-# links = [
-#     {'source': '结点1', 'target': '结点2', 'value': 2},
-#     {'source': '结点2', 'target': '结点3', 'value': 3},
-#     {'source': '结点3', 'target': '结点4', 'value': 4},
-#     # {'source': '结点4', 'target': '结点5', 'value': 5},
-#     # {'source': '结点5', 'target': '结点6', 'value': 6},
-#     # {'source': '结点6', 'target': '结点1', 'value': 7},
-# ]
+yamlPath = 'config.yaml'
+
 
 def render_entegor(xls_path, node_idx, link_idx, comment_idx=None, seperator=',', row_start_idx=0):
     nodes, links = read_map_xls(xls_path, node_idx, link_idx, comment_idx, seperator, row_start_idx)
@@ -48,11 +34,15 @@ def render_entegor(xls_path, node_idx, link_idx, comment_idx=None, seperator=','
     os.system("render.html")
 
 if __name__ == '__main__':
-    target_xls = 'entegor.xlsx'
-    # if os.path.exists(target_xls):
-    #     render_xls(target_xls, 0, 2, 3)
-    # else:
+    assert os.path.exists(yamlPath), "config.yaml配置文件不存在"
+
+    cfs = {}
+    with open(yamlPath, 'rb') as f:
+        cfs = f.read()
+        cfs = yaml.load(cfs, Loader=yaml.Loader)
+
+    target_xls, node_idx, link_idx, comment_idx, seperator, row_start_idx = cfs['target_xls'], cfs['node_idx'], cfs['link_idx'], cfs['comment_idx'], cfs['seperator'], cfs['row_start_idx']
 
     assert os.path.exists(target_xls), "目标xls文件不存在"
-    render_entegor(target_xls, 0, 2, 3)
+    render_entegor(target_xls, node_idx, link_idx, comment_idx, seperator, row_start_idx)
 

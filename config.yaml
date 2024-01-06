@@ -1,0 +1,12 @@
+
+target_xls: entegor.xls
+
+node_idx: 0
+
+link_idx: 2
+
+comment_idx: 3
+
+seperator: ','
+
+row_start_idx: 0
