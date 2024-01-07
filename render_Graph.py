@@ -9,7 +9,7 @@ import yaml
 yamlPath = 'config.yaml'
 
 
-def render_entegor(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None, seperator=',', row_start_idx=0):
+def render_Graph(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None, seperator=',', row_start_idx=0):
     nodes, links, _, __, grp_set = read_map_xls(xls_path, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx)
     categories = [opts.GraphCategory(name=grp) for grp in grp_set]
 
@@ -78,4 +78,4 @@ if __name__ == '__main__':
         cfs['row_start_idx']
 
     assert os.path.exists(target_xls), "目标xls文件不存在"
-    render_entegor(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx)
+    render_Graph(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx)
