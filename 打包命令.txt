@@ -1,0 +1,9 @@
+
+D:\UserApps\Programs\virtualenv\venv\Scripts\activate
+
+pyinstaller --add-data="D:\UserApps\Programs\Python\Lib\site-packages\pyecharts;pyecharts" -Fw D:\zzxs\codes\RenderGraph\RenderGraph\render_entegor.py --hidden-import telnetlib --hidden-import sip --hidden-import paramiko --hidden-import PyQt4.QtNetwork -i D:\zzxs\codes\RenderGraph\RenderGraph\link.ico  
+
+pyinstaller --add-data="D:\UserApps\Programs\Python\Lib\site-packages\pyecharts;pyecharts" -F D:\zzxs\codes\RenderGraph\RenderGraph\render_entegor.py --hidden-import telnetlib --hidden-import sip --hidden-import paramiko --hidden-import PyQt4.QtNetwork -i D:\zzxs\codes\RenderGraph\RenderGraph\link.ico  
+
+
+deactivate
