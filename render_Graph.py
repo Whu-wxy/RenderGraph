@@ -66,9 +66,7 @@ if __name__ == '__main__':
     print('begin render...')
 
     yamlPath = 'config.yaml'
-    # log = Logger('all.log', level='debug')
-
-    assert os.path.exists(yamlPath), "config.yaml配置文件不存在"
+    assert os.path.exists(yamlPath), log.logger.warning("config.yaml配置文件不存在")
 
     cfs = {}
     with open(yamlPath, 'rb') as f:
@@ -94,5 +92,8 @@ if __name__ == '__main__':
         data['seperator'], \
         data['row_start_idx']
 
-    assert os.path.exists(target_xls), "目标xls文件不存在"
-    render_Graph(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx, graph)
+    assert os.path.exists(target_xls), log.logger.warning("目标xls文件不存在")
+    try:
+        render_Graph(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx, graph)
+    except Exception as r:
+        log.logger.warning(r)
