@@ -1,5 +1,5 @@
 import pandas as pd
-
+from logconfig import log
 
 def read_map_xls(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None, seperator=',', row_start_idx=0):
     df = pd.read_excel(xls_path, header=None) # usecols=[node_idx, link_idx],
@@ -24,8 +24,8 @@ def read_map_xls(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None,
         grp_set = set()
 
     for i, nd in enumerate(nodes_data):
-        assert nd not in nodes_set, '节点定义重复:{}, 行数:{}'.format(nd, i)
-        assert nd != 'nan', '节点名字未定义:{}, 行数:{}'.format(nd, i)
+        assert nd not in nodes_set, log.logger.error('节点定义重复:{}, 行数:{}'.format(nd, i))
+        assert nd != 'nan', log.logger.error('节点名字未定义:{}, 行数:{}'.format(nd, i))
 
         nodes_set.add(nd)
         prop = {}
@@ -38,22 +38,26 @@ def read_map_xls(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None,
         nodes.append(prop)
 
     for i, prev_nodes in enumerate(links_data):
-        for prev_nd in str(prev_nodes).split(seperator):
-            target_nd = nodes_data[i]
+        target_nd = nodes_data[i]
+        target_grp = group_data[i]
 
+        is_head = True
+        for prev_nd in str(prev_nodes).split(seperator):
             if prev_nd != 'nan':
-                assert prev_nd in nodes_set, '前置节点未定义: {}, 行数:{}'.format(prev_nd, i)
+                assert prev_nd in nodes_set, log.logger.error('前置节点未定义: {}, 行数:{}'.format(prev_nd, i))
+                prev_grp = group_data[nodes_data.index(prev_nd)]
+                if group_idx is not None and target_grp == prev_grp:
+                    is_head = False
             else:
                 if group_idx is not None:
-                    links.append({'target': target_nd, 'source': group_data[i]})
+                    links.append({'target': target_nd, 'source': target_grp})
                     continue
+
+            if is_head:
+                links.append({'target': target_nd, 'source': target_grp})
 
             links.append({'target': target_nd, 'source': prev_nd})
             global_link_dict[prev_nd] = target_nd
-
-    # print(nodes)
-    # print(links)
-    # print(global_dict)
 
     return nodes, links, global_link_dict, nodes_set, grp_set
 

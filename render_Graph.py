@@ -5,30 +5,39 @@ import os
 from read_xls_nodes import read_map_xls
 from html_to_share import html_to_share
 import yaml
+from logconfig import log
 
-yamlPath = 'config.yaml'
-
-
-def render_Graph(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None, seperator=',', row_start_idx=0):
+def render_Graph(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None, seperator=',', row_start_idx=0, graph_cfs=None):
     nodes, links, _, __, grp_set = read_map_xls(xls_path, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx)
     categories = [opts.GraphCategory(name=grp) for grp in grp_set]
 
     # init_opts=opts.InitOpts(width='100%', height='100%')
-    G = Graph(init_opts=opts.InitOpts(width='100%', height='1000px', renderer='svg', theme=ThemeType.ESSOS, animation_opts=opts.AnimationOpts(animation=False)))
+    G = Graph(init_opts=opts.InitOpts(width=graph_cfs['width'] or '100%',
+                                      height=graph_cfs['height'] or '1000px',
+                                      renderer='svg',
+                                      theme=ThemeType.ESSOS,
+                                      animation_opts=opts.AnimationOpts(animation=False)))
     G.add(
         series_name='',
         nodes=nodes,
-        symbol_size=50,
+        symbol_size=graph_cfs['symbol_size'] or 50,
+        edge_length=graph_cfs['edge_length'] or 20,
         links=links,
         categories=categories,
-        repulsion=1000,  # 斥力
+        repulsion=graph_cfs['repulsion'] or 2000,  # 斥力
         # edge_label=opts.LabelOpts(is_show=True, position='middle', formatter='{b}的数据{c}'),
         symbol='roundRect',  # arrow pin roundRect
         is_draggable=True,
-        friction=0.4,
+        friction=0.5,
         is_rotate_label=False,
         is_layout_animation=True,
-        edge_symbol=['','arrow']
+        edge_symbol=['','arrow'],
+        linestyle_opts=opts.LineStyleOpts(is_show=True,
+                                          width=2,
+                                          curve=0,
+                                          color='#000000'),
+        label_opts=opts.LabelOpts(is_show=True,
+                                  font_size=graph_cfs['font_size'] or '10px')
     )
 
     G.set_global_opts(title_opts=opts.TitleOpts(title='Entegor调度表Demo'),
@@ -55,12 +64,20 @@ def render_Graph(xls_path, node_idx, link_idx, comment_idx=None, group_idx=None,
 
 if __name__ == '__main__':
     print('begin render...')
+
+    yamlPath = 'config.yaml'
+    # log = Logger('all.log', level='debug')
+
     assert os.path.exists(yamlPath), "config.yaml配置文件不存在"
 
     cfs = {}
     with open(yamlPath, 'rb') as f:
         cfs = f.read()
         cfs = yaml.load(cfs, Loader=yaml.Loader)
+        log.logger.info(cfs)
+
+    data = cfs['data']
+    graph = cfs['graph']
 
     target_xls, \
     node_idx, \
@@ -69,13 +86,13 @@ if __name__ == '__main__':
     group_idx, \
     seperator, \
     row_start_idx = \
-        cfs['target_xls'], \
-        cfs['node_idx'], \
-        cfs['link_idx'], \
-        cfs['comment_idx'], \
-        cfs['group_idx'], \
-        cfs['seperator'], \
-        cfs['row_start_idx']
+        data['target_xls'], \
+        data['node_idx'], \
+        data['link_idx'], \
+        data['comment_idx'], \
+        data['group_idx'], \
+        data['seperator'], \
+        data['row_start_idx']
 
     assert os.path.exists(target_xls), "目标xls文件不存在"
-    render_Graph(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx)
+    render_Graph(target_xls, node_idx, link_idx, comment_idx, group_idx, seperator, row_start_idx, graph)

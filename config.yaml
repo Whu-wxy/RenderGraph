@@ -1,14 +1,19 @@
+data:
+  target_xls: entegor.xls
+  node_idx: 0
+  link_idx: 2
+  comment_idx: 3
+  group_idx: 4
+  seperator: ','
+  row_start_idx: 1
 
-target_xls: entegor.xls
+graph:
+  # 画布尺寸
+  width: 100%
+  height: 1000px
+  # 斥力
+  repulsion: 2000
+  edge_length: 20
+  symbol_size: 50
+  font_size: 15px
 
-node_idx: 0
-
-link_idx: 2
-
-comment_idx: 3
-
-group_idx: 4
-
-seperator: ','
-
-row_start_idx: 1
